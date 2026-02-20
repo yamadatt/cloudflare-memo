@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { deleteNoteAction } from '@/lib/actions';
 import { Trash2, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -10,6 +11,7 @@ interface DeleteButtonProps {
 }
 
 export default function DeleteButton({ noteId }: DeleteButtonProps) {
+  const router = useRouter();
   const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -22,14 +24,11 @@ export default function DeleteButton({ noteId }: DeleteButtonProps) {
     setIsDeleting(true);
     setError(null);
 
-    try {
-      const result = await deleteNoteAction(noteId);
-      if (!result.success) {
-        setError(result.error);
-        setIsDeleting(false);
-      }
-    } catch {
-      setError('削除中に予期しないエラーが発生しました。');
+    const result = await deleteNoteAction(noteId);
+    if (result.success) {
+      router.push('/');
+    } else {
+      setError(result.error ?? '削除に失敗しました');
       setIsDeleting(false);
     }
   };

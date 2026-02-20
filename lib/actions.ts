@@ -3,13 +3,28 @@
 import { redirect } from 'next/navigation';
 import { getRepository } from './db';
 import { createNoteService, updateNoteService, deleteNoteService } from './note-service';
+import { createSupabaseServerClient } from './supabase/server';
 import type { ActionResult } from './types';
+
+async function requireAuth(): Promise<ActionResult | null> {
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return { success: false, error: '操作するにはログインが必要です' };
+  }
+  return null;
+}
 
 // ノート作成アクション（useActionState 対応シグネチャ）
 export async function createNoteAction(
   _prevState: ActionResult,
   formData: FormData
 ): Promise<ActionResult> {
+  const authError = await requireAuth();
+  if (authError) return authError;
+
   const title = (formData.get('title') as string) ?? '';
   const content = (formData.get('content') as string) ?? '';
 
@@ -29,6 +44,9 @@ export async function updateNoteAction(
   _prevState: ActionResult,
   formData: FormData
 ): Promise<ActionResult> {
+  const authError = await requireAuth();
+  if (authError) return authError;
+
   const id = (formData.get('id') as string) ?? '';
   const title = (formData.get('title') as string) ?? '';
   const content = (formData.get('content') as string) ?? '';
@@ -46,13 +64,9 @@ export async function updateNoteAction(
 
 // ノート削除アクション
 export async function deleteNoteAction(id: string): Promise<ActionResult> {
+  const authError = await requireAuth();
+  if (authError) return authError;
+
   const repo = await getRepository();
-  const result = await deleteNoteService(repo, id);
-
-  if (!result.success) {
-    return result;
-  }
-
-  redirect('/');
-  return result;
+  return deleteNoteService(repo, id);
 }

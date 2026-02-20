@@ -1,11 +1,13 @@
 import { getCloudflareContext } from '@opennextjs/cloudflare';
+import { createClient } from '@supabase/supabase-js';
 import type { Note } from './types';
-import { D1NotesRepository, type INotesRepository } from './repository';
+import { SupabaseNotesRepository, type INotesRepository } from './repository';
 
 // リポジトリインスタンスを取得するファクトリ
 export async function getRepository(): Promise<INotesRepository> {
-  const ctx = await getCloudflareContext({ async: true });
-  return new D1NotesRepository(ctx.env.DB);
+  const { env } = await getCloudflareContext({ async: true });
+  const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_ANON_KEY);
+  return new SupabaseNotesRepository(supabase);
 }
 
 // ページが使う便利関数（互換性維持）

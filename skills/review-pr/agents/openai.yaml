@@ -1,0 +1,4 @@
+interface:
+  display_name: "PRレビュー"
+  short_description: "ghでPR差分をレビュー"
+  default_prompt: "$review-pr を使って、MCPを使わず GitHub CLI（gh）でPRをレビューし、指摘と最終判定を作成して。"

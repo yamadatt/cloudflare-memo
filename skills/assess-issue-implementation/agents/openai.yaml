@@ -1,0 +1,4 @@
+interface:
+  display_name: "ISSUE実装検討"
+  short_description: "Issue要否と3案を評価"
+  default_prompt: "$assess-issue-implementation を使って、Issue内容から実装要否・フィージビリティ・実装案3パターンを整理して。"

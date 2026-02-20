@@ -7,7 +7,7 @@ import './globals.css';
 
 export const metadata: Metadata = {
   title: 'ログインすれば誰でも書けるmemo',
-  description: 'Cloudflare D1を使ったシンプルなメモ帳アプリ',
+  description: 'Supabase を使ったシンプルなメモ帳アプリ',
 };
 
 export default async function RootLayout({

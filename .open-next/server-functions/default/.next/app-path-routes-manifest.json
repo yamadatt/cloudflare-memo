@@ -1,7 +1,0 @@
-{
-  "/_not-found/page": "/_not-found",
-  "/notes/new/page": "/notes/new",
-  "/page": "/",
-  "/notes/[id]/page": "/notes/[id]",
-  "/notes/[id]/edit/page": "/notes/[id]/edit"
-}

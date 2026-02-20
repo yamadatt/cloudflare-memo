@@ -7,7 +7,8 @@ import { createSupabaseServerClient } from './supabase/server';
 export async function signInWithGoogle(): Promise<void> {
   const supabase = await createSupabaseServerClient();
   const headersList = await headers();
-  const origin = headersList.get('origin') ?? '';
+  const origin =
+    headersList.get('origin') ?? `https://${headersList.get('host')}`;
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',

@@ -4,7 +4,11 @@ import { signInWithGoogle } from '@/lib/auth-actions';
 
 export const dynamic = 'force-dynamic';
 
-export default async function LoginPage() {
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string }>;
+}) {
   const supabase = await createSupabaseServerClient();
   const {
     data: { user },
@@ -13,6 +17,8 @@ export default async function LoginPage() {
   if (user) {
     redirect('/');
   }
+
+  const { error } = await searchParams;
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] gap-8">
@@ -23,6 +29,11 @@ export default async function LoginPage() {
         <p className="text-sm" style={{ color: 'var(--foreground-secondary)' }}>
           ノートを作成・編集するにはログインが必要です
         </p>
+        {error && (
+          <p className="mt-3 text-sm font-medium text-red-500">
+            ログインに失敗しました。もう一度お試しください。
+          </p>
+        )}
       </div>
       <form action={signInWithGoogle}>
         <button

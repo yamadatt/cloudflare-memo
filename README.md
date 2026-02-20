@@ -128,6 +128,25 @@ npm run preview
 | `npm run lint` | ESLint 実行 |
 | `npm test` | Vitest テスト実行 |
 
+## GitHub Actions（CI/CD）
+
+### ワークフロー構成
+
+- CI: `.github/workflows/ci.yml`
+  - トリガー: `pull_request`（main向け）、`push`（main）、`workflow_dispatch`
+  - 実行内容: `npm ci` → `npm run test` → `npm run build`
+- Deploy: `.github/workflows/deploy.yml`
+  - トリガー: `CI` の `workflow_run`（`push main` 由来で成功時）または `workflow_dispatch`
+  - 実行内容: `npm ci` → `npm run deploy`
+- 両ワークフローで `Kesin11/actions-timeline@v2` を利用し、ジョブの実行時間を可視化
+
+### GitHub Secrets
+
+GitHub Actions の `Deploy` 実行前に、リポジトリ Secrets に以下を設定する。
+
+- `CLOUDFLARE_API_TOKEN`
+- `CLOUDFLARE_ACCOUNT_ID`
+
 ## データベーススキーマ
 
 ```sql

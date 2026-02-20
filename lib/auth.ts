@@ -1,7 +1,8 @@
+import { cache } from 'react';
 import type { User } from '@supabase/supabase-js';
 import { createSupabaseServerClient } from './supabase/server';
 
-export async function getCurrentUser(): Promise<User | null> {
+async function fetchCurrentUser(): Promise<User | null> {
   const supabase = await createSupabaseServerClient();
   const {
     data: { user },
@@ -9,6 +10,4 @@ export async function getCurrentUser(): Promise<User | null> {
   return user;
 }
 
-export async function isAuthenticated(): Promise<boolean> {
-  return (await getCurrentUser()) !== null;
-}
+export const getCurrentUser = cache(fetchCurrentUser);

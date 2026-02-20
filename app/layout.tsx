@@ -6,7 +6,7 @@ import { signOutAction } from '@/lib/auth-actions';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'memo',
+  title: 'ログインすれば誰でも書けるmemo',
   description: 'Cloudflare D1を使ったシンプルなメモ帳アプリ',
 };
 

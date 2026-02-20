@@ -1,6 +1,7 @@
 import { getCloudflareContext } from '@opennextjs/cloudflare';
+import { createClient } from '@supabase/supabase-js';
 import type { Note } from './types';
-import { createClient, SupabaseNotesRepository, type INotesRepository } from './repository';
+import { SupabaseNotesRepository, type INotesRepository } from './repository';
 
 // リポジトリインスタンスを取得するファクトリ
 export async function getRepository(): Promise<INotesRepository> {

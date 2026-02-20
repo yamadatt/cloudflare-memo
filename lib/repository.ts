@@ -1,4 +1,4 @@
-import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import { type SupabaseClient } from '@supabase/supabase-js';
 import type { Note, CreateNoteInput, UpdateNoteInput } from './types';
 
 // D1データベースのレコード形式（スネークケース）
@@ -30,7 +30,7 @@ export interface INotesRepository {
   deleteNote(id: string): Promise<void>;
 }
 
-// D1を使った本番実装
+// D1を使った実装（D1利用時のロールバック用に保持）
 export class D1NotesRepository implements INotesRepository {
   constructor(private db: D1Database) {}
 
@@ -134,14 +134,14 @@ export class SupabaseNotesRepository implements INotesRepository {
 
   async updateNote(input: UpdateNoteInput): Promise<Note> {
     const now = new Date().toISOString();
-    const { error } = await this.supabase
+    const { data, error } = await this.supabase
       .from('notes')
       .update({ title: input.title, content: input.content, updated_at: now })
-      .eq('id', input.id);
+      .eq('id', input.id)
+      .select()
+      .single();
     if (error) throw new Error(error.message);
-    const updated = await this.getNoteById(input.id);
-    if (!updated) throw new Error(`ノートが見つかりませんでした: ${input.id}`);
-    return updated;
+    return toNote(data as NoteRecord);
   }
 
   async deleteNote(id: string): Promise<void> {
@@ -149,5 +149,3 @@ export class SupabaseNotesRepository implements INotesRepository {
     if (error) throw new Error(error.message);
   }
 }
-
-export { createClient };

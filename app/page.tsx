@@ -44,12 +44,21 @@ export default async function HomePage() {
           <p className="text-zinc-500 max-w-[280px] mb-8 leading-relaxed">
             アイデアやメモを書き留めて、<br />クラウドに保存しましょう。
           </p>
-          <Link
-            href="/notes/new"
-            className="inline-flex items-center gap-2 px-6 py-3 text-sm font-bold text-white bg-accent hover:bg-accent-hover rounded-full shadow-lg shadow-blue-500/20 transition-all active:scale-95"
-          >
-            最初のノートを書く
-          </Link>
+          {user ? (
+            <Link
+              href="/notes/new"
+              className="inline-flex items-center gap-2 px-6 py-3 text-sm font-bold text-white bg-accent hover:bg-accent-hover rounded-full shadow-lg shadow-blue-500/20 transition-all active:scale-95"
+            >
+              最初のノートを書く
+            </Link>
+          ) : (
+            <Link
+              href="/login"
+              className="inline-flex items-center gap-2 px-6 py-3 text-sm font-bold text-white bg-accent hover:bg-accent-hover rounded-full shadow-lg shadow-blue-500/20 transition-all active:scale-95"
+            >
+              ログインして書く
+            </Link>
+          )}
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

@@ -4,6 +4,8 @@ import { getNoteById } from '@/lib/db';
 import { getCurrentUser } from '@/lib/auth';
 import DeleteButton from '@/components/DeleteButton';
 import { ArrowLeft, Edit2, Calendar, Clock } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 export const dynamic = 'force-dynamic';
 
@@ -78,11 +80,9 @@ export default async function NoteDetailPage({ params }: NoteDetailPageProps) {
           </div>
         </header>
 
-        <div className="prose prose-zinc dark:prose-invert max-w-none">
+        <div className="markdown max-w-none">
           {note.content ? (
-            <p className="text-xl text-foreground/90 whitespace-pre-wrap leading-relaxed">
-              {note.content}
-            </p>
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>{note.content}</ReactMarkdown>
           ) : (
             <p className="text-zinc-400 italic text-lg">本文がありません</p>
           )}

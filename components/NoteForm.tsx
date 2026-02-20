@@ -1,9 +1,11 @@
 'use client';
 
-import { useActionState } from 'react';
+import { useActionState, useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Save, Loader2 } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import type { ActionResult } from '@/lib/types';
 
 type FormAction = (
@@ -31,6 +33,8 @@ export default function NoteForm({
   noteId,
 }: NoteFormProps) {
   const [state, formAction, isPending] = useActionState(action, initialState);
+  const [tab, setTab] = useState<'edit' | 'preview'>('edit');
+  const [content, setContent] = useState(initialContent);
 
   return (
     <motion.div
@@ -81,15 +85,59 @@ export default function NoteForm({
         </div>
 
         <div className="space-y-4">
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setTab('edit')}
+              className={`px-4 py-2 rounded-full text-sm font-semibold transition-colors ${
+                tab === 'edit'
+                  ? 'bg-zinc-900 text-white dark:bg-white dark:text-zinc-900'
+                  : 'text-zinc-500 hover:text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-800'
+              }`}
+              disabled={isPending}
+            >
+              編集
+            </button>
+            <button
+              type="button"
+              onClick={() => setTab('preview')}
+              className={`px-4 py-2 rounded-full text-sm font-semibold transition-colors ${
+                tab === 'preview'
+                  ? 'bg-zinc-900 text-white dark:bg-white dark:text-zinc-900'
+                  : 'text-zinc-500 hover:text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-800'
+              }`}
+              disabled={isPending}
+            >
+              プレビュー
+            </button>
+          </div>
+
           <textarea
             id="content"
             name="content"
-            defaultValue={initialContent}
+            value={content}
+            onChange={(event) => setContent(event.target.value)}
             rows={15}
-            className="w-full text-lg text-foreground bg-transparent border-none outline-none placeholder:text-zinc-300 dark:placeholder:zinc-700 disabled:opacity-50 resize-none leading-relaxed"
+            className={`w-full text-lg text-foreground bg-transparent border-none outline-none placeholder:text-zinc-300 dark:placeholder:zinc-700 disabled:opacity-50 resize-none leading-relaxed ${
+              tab === 'preview' ? 'hidden' : ''
+            }`}
             placeholder="ここに内容を記述..."
             disabled={isPending}
           />
+
+          {tab === 'preview' && (
+            <div className="min-h-[22rem] rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6">
+              {content.trim().length > 0 ? (
+                <div className="markdown">
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    {content}
+                  </ReactMarkdown>
+                </div>
+              ) : (
+                <p className="text-zinc-400 italic">本文を入力するとここにプレビューされます</p>
+              )}
+            </div>
+          )}
         </div>
 
         <div className="fixed bottom-8 left-0 right-0 px-6 pointer-events-none">

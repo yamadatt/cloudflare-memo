@@ -70,4 +70,23 @@ describe('NoteDetailPage 認証分岐UI', () => {
     expect(html).not.toContain('編集');
     expect(html).not.toContain('削除');
   });
+
+  it('本文をMarkdownとしてレンダリングする', async () => {
+    mockGetCurrentUser.mockResolvedValue(null);
+    mockGetNoteById.mockResolvedValue({
+      id: 'n1',
+      title: 'title',
+      content: '## 見出し\n\n- item1\n- item2\n\n`code`',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    });
+
+    const html = renderToStaticMarkup(
+      await NoteDetailPage({ params: Promise.resolve({ id: 'n1' }) })
+    );
+
+    expect(html).toContain('<h2>見出し</h2>');
+    expect(html).toContain('<li>item1</li>');
+    expect(html).toContain('<code>code</code>');
+  });
 });

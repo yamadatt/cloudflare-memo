@@ -1,7 +1,7 @@
 import { getAllNotes } from '@/lib/db';
 import NoteCard from '@/components/NoteCard';
 import Link from 'next/link';
-import { StickyNote, Search } from 'lucide-react';
+import { StickyNote } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 

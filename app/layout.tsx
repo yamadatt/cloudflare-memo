@@ -1,9 +1,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { StickyNote } from 'lucide-react';
-import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { signOutAction } from '@/lib/auth-actions';
-import NewNoteHeaderButton from '@/components/NewNoteHeaderButton';
+import { getCurrentUser } from '@/lib/auth';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -16,10 +15,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const supabase = await createSupabaseServerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
 
   return (
     <html lang="ja">
@@ -28,7 +24,7 @@ export default async function RootLayout({
           <div className="max-w-5xl mx-auto px-6 h-full flex items-center justify-between">
             <Link href="/" className="flex items-center gap-2 text-xl font-bold tracking-tight hover:opacity-80 transition-opacity">
               <StickyNote className="w-6 h-6 text-accent" />
-              <span>memo</span>
+              <span>ログインすれば誰でも書けるmemo</span>
             </Link>
             <div className="flex items-center gap-3">
               {user ? (
@@ -39,7 +35,6 @@ export default async function RootLayout({
                   >
                     {user.email}
                   </span>
-                  <NewNoteHeaderButton />
                   <form action={signOutAction}>
                     <button
                       type="submit"

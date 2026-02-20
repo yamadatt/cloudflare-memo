@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getNoteById } from '@/lib/db';
+import { getCurrentUser } from '@/lib/auth';
 import DeleteButton from '@/components/DeleteButton';
 import { ArrowLeft, Edit2, Calendar, Clock } from 'lucide-react';
 
@@ -13,6 +14,7 @@ interface NoteDetailPageProps {
 export default async function NoteDetailPage({ params }: NoteDetailPageProps) {
   const { id } = await params;
   const note = await getNoteById(id);
+  const user = await getCurrentUser();
 
   if (!note) {
     notFound();
@@ -42,16 +44,18 @@ export default async function NoteDetailPage({ params }: NoteDetailPageProps) {
           </div>
           <span>一覧に戻る</span>
         </Link>
-        <div className="flex items-center gap-3">
-          <Link
-            href={`/notes/${note.id}/edit`}
-            className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-zinc-600 dark:text-zinc-400 hover:text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-full transition-all"
-          >
-            <Edit2 className="w-4 h-4" />
-            <span>編集</span>
-          </Link>
-          <DeleteButton noteId={note.id} />
-        </div>
+        {user ? (
+          <div className="flex items-center gap-3">
+            <Link
+              href={`/notes/${note.id}/edit`}
+              className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-zinc-600 dark:text-zinc-400 hover:text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-full transition-all"
+            >
+              <Edit2 className="w-4 h-4" />
+              <span>編集</span>
+            </Link>
+            <DeleteButton noteId={note.id} />
+          </div>
+        ) : null}
       </div>
 
       <article className="space-y-10">

@@ -3,14 +3,11 @@
 import { redirect } from 'next/navigation';
 import { getRepository } from './db';
 import { createNoteService, updateNoteService, deleteNoteService } from './note-service';
-import { createSupabaseServerClient } from './supabase/server';
+import { getCurrentUser } from './auth';
 import type { ActionResult } from './types';
 
 async function requireAuth(): Promise<ActionResult | null> {
-  const supabase = await createSupabaseServerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
   if (!user) {
     return { success: false, error: '操作するにはログインが必要です' };
   }

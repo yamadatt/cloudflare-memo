@@ -1,12 +1,14 @@
 import { getAllNotes } from '@/lib/db';
+import { getCurrentUser } from '@/lib/auth';
 import NoteCard from '@/components/NoteCard';
 import Link from 'next/link';
-import { StickyNote } from 'lucide-react';
+import { Plus, StickyNote } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
 export default async function HomePage() {
   const notes = await getAllNotes();
+  const user = await getCurrentUser();
 
   return (
     <div className="space-y-12">
@@ -22,6 +24,15 @@ export default async function HomePage() {
             <span>件のメモが保存されています</span>
           </p>
         </div>
+        {user ? (
+          <Link
+            href="/notes/new"
+            className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-accent hover:bg-accent-hover rounded-full shadow-lg shadow-blue-500/20 transition-all active:scale-95"
+          >
+            <Plus className="w-4 h-4" />
+            <span>書く</span>
+          </Link>
+        ) : null}
       </div>
 
       {notes.length === 0 ? (

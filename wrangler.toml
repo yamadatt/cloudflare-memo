@@ -1,0 +1,11 @@
+name = "cloudflare-notes-app"
+compatibility_date = "2025-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+main = ".open-next/worker.js"
+assets = { directory = ".open-next/assets", binding = "ASSETS" }
+
+[[d1_databases]]
+binding = "DB"
+database_name = "notes_db"
+database_id = "3aede7a5-8ad0-419c-87c6-e1c86e026182"

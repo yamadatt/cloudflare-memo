@@ -57,7 +57,6 @@ export default function NoteForm({
 
       <form action={formAction} className="space-y-12 pb-32">
         {noteId && <input type="hidden" name="id" value={noteId} />}
-        <input type="hidden" name="content" value={content} />
 
         {!state.success && state.error && (
           <motion.div
@@ -113,17 +112,20 @@ export default function NoteForm({
             </button>
           </div>
 
-          {tab === 'edit' ? (
-            <textarea
-              id="content"
-              value={content}
-              onChange={(event) => setContent(event.target.value)}
-              rows={15}
-              className="w-full text-lg text-foreground bg-transparent border-none outline-none placeholder:text-zinc-300 dark:placeholder:zinc-700 disabled:opacity-50 resize-none leading-relaxed"
-              placeholder="ここに内容を記述..."
-              disabled={isPending}
-            />
-          ) : (
+          <textarea
+            id="content"
+            name="content"
+            value={content}
+            onChange={(event) => setContent(event.target.value)}
+            rows={15}
+            className={`w-full text-lg text-foreground bg-transparent border-none outline-none placeholder:text-zinc-300 dark:placeholder:zinc-700 disabled:opacity-50 resize-none leading-relaxed ${
+              tab === 'preview' ? 'hidden' : ''
+            }`}
+            placeholder="ここに内容を記述..."
+            disabled={isPending}
+          />
+
+          {tab === 'preview' && (
             <div className="min-h-[22rem] rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6">
               {content.trim().length > 0 ? (
                 <div className="markdown">

@@ -28,9 +28,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
-      # Build 時の認証判定で参照されるため、ダミー値を設定
-      SUPABASE_URL: https://example.com
-      SUPABASE_ANON_KEY: dummy
+      # Build 時の認証判定で参照されるため、GitHub Secrets を使用
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
     steps:
       - name: Track timeline
         uses: Kesin11/actions-timeline@v2

@@ -222,6 +222,8 @@ GitHub Actions の `Deploy` 実行前に、リポジトリ Secrets に以下を�
 
 - `CLOUDFLARE_API_TOKEN`
 - `CLOUDFLARE_ACCOUNT_ID`
+- `SUPABASE_URL`
+- `SUPABASE_ANON_KEY`
 
 ## データベーススキーマ
 

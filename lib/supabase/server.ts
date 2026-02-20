@@ -1,11 +1,11 @@
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
-import { getCloudflareContext } from '@opennextjs/cloudflare';
+import { getSupabaseRuntimeEnv } from '../env';
 
 export async function createSupabaseServerClient() {
-  const { env } = await getCloudflareContext({ async: true });
+  const { SUPABASE_URL, SUPABASE_ANON_KEY } = await getSupabaseRuntimeEnv();
   const cookieStore = await cookies();
-  return createServerClient(env.SUPABASE_URL, env.SUPABASE_ANON_KEY, {
+  return createServerClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
     cookies: {
       getAll() {
         return cookieStore.getAll();

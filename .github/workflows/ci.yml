@@ -21,6 +21,10 @@ jobs:
   test-and-build:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    env:
+      # Build 時の認証判定で参照されるため、ダミー値を設定
+      SUPABASE_URL: https://example.com
+      SUPABASE_ANON_KEY: dummy
     steps:
       - name: Track timeline
         uses: Kesin11/actions-timeline@v2

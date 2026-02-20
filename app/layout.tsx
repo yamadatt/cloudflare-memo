@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Plus, StickyNote } from 'lucide-react';
+import { StickyNote } from 'lucide-react';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { signOutAction } from '@/lib/auth-actions';
+import NewNoteHeaderButton from '@/components/NewNoteHeaderButton';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -38,13 +39,7 @@ export default async function RootLayout({
                   >
                     {user.email}
                   </span>
-                  <Link
-                    href="/notes/new"
-                    className="flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-accent hover:bg-accent-hover rounded-full shadow-lg shadow-blue-500/20 transition-all active:scale-95"
-                  >
-                    <Plus className="w-4 h-4" />
-                    <span>書く</span>
-                  </Link>
+                  <NewNoteHeaderButton />
                   <form action={signOutAction}>
                     <button
                       type="submit"

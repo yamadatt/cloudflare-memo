@@ -16,7 +16,11 @@ const mockCreateSupabaseServerClient = vi.hoisted(() =>
   })
 );
 
-const mockRedirect = vi.hoisted(() => vi.fn());
+const mockRedirect = vi.hoisted(() =>
+  vi.fn((to: string) => {
+    throw new Error(`NEXT_REDIRECT:${to}`);
+  })
+);
 
 vi.mock('next/headers', () => ({ headers: mockHeaders }));
 vi.mock('@/lib/supabase/server', () => ({
@@ -48,8 +52,11 @@ describe('signInWithGoogle', () => {
       error: new Error('oauth error'),
     });
 
-    await signInWithGoogle();
+    await expect(signInWithGoogle()).rejects.toThrow(
+      'NEXT_REDIRECT:/login?error=auth_failed'
+    );
 
+    expect(mockRedirect).toHaveBeenCalledTimes(1);
     expect(mockRedirect).toHaveBeenCalledWith('/login?error=auth_failed');
   });
 
@@ -59,8 +66,11 @@ describe('signInWithGoogle', () => {
       error: null,
     });
 
-    await signInWithGoogle();
+    await expect(signInWithGoogle()).rejects.toThrow(
+      'NEXT_REDIRECT:/login?error=auth_failed'
+    );
 
+    expect(mockRedirect).toHaveBeenCalledTimes(1);
     expect(mockRedirect).toHaveBeenCalledWith('/login?error=auth_failed');
   });
 
@@ -71,8 +81,11 @@ describe('signInWithGoogle', () => {
       error: null,
     });
 
-    await signInWithGoogle();
+    await expect(signInWithGoogle()).rejects.toThrow(
+      `NEXT_REDIRECT:${oauthUrl}`
+    );
 
+    expect(mockRedirect).toHaveBeenCalledTimes(1);
     expect(mockRedirect).toHaveBeenCalledWith(oauthUrl);
   });
 
@@ -86,12 +99,18 @@ describe('signInWithGoogle', () => {
       error: null,
     });
 
-    await signInWithGoogle();
+    await expect(signInWithGoogle()).rejects.toThrow(
+      'NEXT_REDIRECT:https://accounts.google.com/o/oauth2/auth'
+    );
 
     const callArg = mockSignInWithOAuth.mock.calls[0]?.[0] as {
       options: { redirectTo: string };
     };
     expect(callArg.options.redirectTo).toBe('https://myapp.example.com/auth/callback');
+    expect(mockRedirect).toHaveBeenCalledTimes(1);
+    expect(mockRedirect).toHaveBeenCalledWith(
+      'https://accounts.google.com/o/oauth2/auth'
+    );
   });
 });
 
@@ -109,9 +128,10 @@ describe('signOutAction', () => {
   it('signOut を呼び出して / へリダイレクト', async () => {
     mockSignOut.mockResolvedValue({});
 
-    await signOutAction();
+    await expect(signOutAction()).rejects.toThrow('NEXT_REDIRECT:/');
 
     expect(mockSignOut).toHaveBeenCalledTimes(1);
+    expect(mockRedirect).toHaveBeenCalledTimes(1);
     expect(mockRedirect).toHaveBeenCalledWith('/');
   });
 });

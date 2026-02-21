@@ -1,7 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { InMemoryNotesRepository } from './helpers/in-memory-repository';
 
-const mockRedirect = vi.hoisted(() => vi.fn());
+const mockRedirect = vi.hoisted(() =>
+  vi.fn((to: string) => {
+    throw new Error(`NEXT_REDIRECT:${to}`);
+  })
+);
 const mockGetCurrentUser = vi.hoisted(() => vi.fn());
 const mockGetRepository = vi.hoisted(() => vi.fn());
 
@@ -60,9 +64,10 @@ describe('createNoteAction', () => {
     mockGetCurrentUser.mockResolvedValue({ id: 'user-1' });
     const fd = makeFormData({ title: '新しいノート', content: '本文' });
 
-    const result = await createNoteAction(INITIAL_STATE, fd);
-
-    expect(result.success).toBe(true);
+    await expect(createNoteAction(INITIAL_STATE, fd)).rejects.toThrow(
+      'NEXT_REDIRECT:/'
+    );
+    expect(mockRedirect).toHaveBeenCalledTimes(1);
     expect(mockRedirect).toHaveBeenCalledWith('/');
   });
 
@@ -70,11 +75,14 @@ describe('createNoteAction', () => {
     mockGetCurrentUser.mockResolvedValue({ id: 'user-1' });
     const fd = makeFormData({ title: '正確なタイトル', content: '正確な内容' });
 
-    await createNoteAction(INITIAL_STATE, fd);
+    await expect(createNoteAction(INITIAL_STATE, fd)).rejects.toThrow(
+      'NEXT_REDIRECT:/'
+    );
 
     const saved = (await repo.getAllNotes())[0];
     expect(saved?.title).toBe('正確なタイトル');
     expect(saved?.content).toBe('正確な内容');
+    expect(mockRedirect).toHaveBeenCalledTimes(1);
   });
 });
 
@@ -117,9 +125,10 @@ describe('updateNoteAction', () => {
     mockGetCurrentUser.mockResolvedValue({ id: 'user-1' });
     const fd = makeFormData({ id: existingNoteId, title: '更新タイトル', content: '更新内容' });
 
-    const result = await updateNoteAction(INITIAL_STATE, fd);
-
-    expect(result.success).toBe(true);
+    await expect(updateNoteAction(INITIAL_STATE, fd)).rejects.toThrow(
+      `NEXT_REDIRECT:/notes/${existingNoteId}`
+    );
+    expect(mockRedirect).toHaveBeenCalledTimes(1);
     expect(mockRedirect).toHaveBeenCalledWith(`/notes/${existingNoteId}`);
   });
 
@@ -127,11 +136,14 @@ describe('updateNoteAction', () => {
     mockGetCurrentUser.mockResolvedValue({ id: 'user-1' });
     const fd = makeFormData({ id: existingNoteId, title: '正確な更新', content: '正確な内容' });
 
-    await updateNoteAction(INITIAL_STATE, fd);
+    await expect(updateNoteAction(INITIAL_STATE, fd)).rejects.toThrow(
+      `NEXT_REDIRECT:/notes/${existingNoteId}`
+    );
 
     const updated = await repo.getNoteById(existingNoteId);
     expect(updated?.title).toBe('正確な更新');
     expect(updated?.content).toBe('正確な内容');
+    expect(mockRedirect).toHaveBeenCalledTimes(1);
   });
 });
 

@@ -8,8 +8,14 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html'],
-      include: ['lib/**/*.ts', 'middleware.ts', 'app/**/*.ts'],
-      exclude: ['lib/types.ts'],
+      all: true,
+      include: [
+        'lib/**/*.{ts,tsx}',
+        'app/**/*.{ts,tsx}',
+        'components/**/*.{ts,tsx}',
+        'middleware.ts',
+      ],
+      exclude: ['lib/types.ts', '**/*.d.ts', '**/*.test.*', '**/__tests__/**'],
     },
   },
   resolve: {

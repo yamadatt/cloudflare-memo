@@ -38,3 +38,6 @@ next-env.d.ts
 .wrangler
 .dev.vars
 .open-next/
+
+# AI work logs (Claude Code internal docs)
+claudedocs/
